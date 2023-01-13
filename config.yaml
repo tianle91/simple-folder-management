@@ -1,9 +1,11 @@
 meta:
   base_dir: example
-  dump_directory: dump
-  managed_directory: managed
+  dump_dir: dump
+  managed_dir: managed
+  cron: '0 * * * *'
 groups:
   group_A:
+    name: group_A_name
     keywords:
-      - kwdA
-      - kwda
+      - keyword_A
+      - keyword_B
