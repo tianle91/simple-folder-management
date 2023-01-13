@@ -1,0 +1,11 @@
+meta:
+  base_dir: tests/example_directory
+  dump_dir: dump
+  managed_dir: managed
+  cron: '0 * * * *'
+groups:
+  group_A:
+    name: group_A_name
+    keywords:
+      - keyword_A
+      - keyword_B
