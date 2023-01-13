@@ -1,5 +1,3 @@
-# Simple Folder Management
-```yaml
 meta:
   base_dir: example
   dump_directory: dump
@@ -9,4 +7,3 @@ groups:
     keywords:
       - kwdA
       - kwda
-```
