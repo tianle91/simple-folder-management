@@ -3,8 +3,9 @@ Here's an example configuration.
 ```yaml
 meta:
   base_dir: example
-  dump_directory: dump
-  managed_directory: managed
+  dump_dir: dump
+  managed_dir: managed
+  cron: '0 * * * *'
 groups:
   group_A:
     name: group_A_name
@@ -12,5 +13,4 @@ groups:
       - keyword_A
       - keyword_B
 ```
-
-For any new folders in `dump`, if any of `keyword_A, keyword_B` are in the new folder name, the new folder will be moved to `managed/group_A_name`.
+Every hour, for any new folders in `dump`, if any of `keyword_A, keyword_B` are in the new folder name, the new folder will be moved to `managed/group_A_name`.
