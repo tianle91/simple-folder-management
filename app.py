@@ -70,7 +70,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     sfm = SimpleFolderManagement(config_path=args.config)
-    log.info(f"Found {len(sfm.config['groups'])} group(s).")
+    log.info(f"Found {len(sfm.config['groups'])} group(s) in config.yaml")
     log.info(f"Dump directory: {sfm.dump_dir}")
     log.info(f"Managed directory: {sfm.managed_dir}")
     while True:
