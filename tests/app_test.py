@@ -12,13 +12,13 @@ def test_get_moves():
     result = sfm.get_moves()
     expected = {
         'keyword_A': (
-            'tests/example_directory/dump/keyword_A/', 
+            'tests/example_directory/dump/keyword_A/',
             'tests/example_directory/group_A_name/keyword_A'
-        ), 
+        ),
         'keyword_B': (
             'tests/example_directory/dump/keyword_B/',
             'tests/example_directory/group_A_name/keyword_B'
-        ), 
+        ),
         'keyword_C': (
             'tests/example_directory/dump/keyword_C/',
             'tests/example_directory/some_subdir/group_C/keyword_C'
