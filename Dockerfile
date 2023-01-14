@@ -11,4 +11,7 @@ COPY ./requirements-dev.txt ./
 RUN pip install -r requirements.txt
 RUN pip install -r requirements-dev.txt
 
+# copy all to workdir
+COPY . /workdir
+WORKDIR /workdir
 ENTRYPOINT [ "python", "app.py", "/config/config.yaml" ]
