@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 import time
@@ -5,6 +6,8 @@ from glob import glob
 
 import pycron
 import yaml
+
+log = logging.getLogger(__name__)
 
 
 class SimpleFolderManagement:
@@ -53,6 +56,7 @@ def execute_moves(folder_mapping: dict):
     for folder_name in folder_mapping:
         source_dir, dest_dir = folder_mapping[folder_name]
         if dest_dir is not None:
+            log.info(f'Moving {source_dir} -> {dest_dir}')
             shutil.move(source_dir, dest_dir)
 
 
@@ -67,6 +71,7 @@ if __name__ == '__main__':
 
     while True:
         if pycron.is_now(sfm.cron):
+            log.info(f'Monitoring {sfm.dump_dir}')
             folder_mapping = sfm.get_moves()
             execute_moves(folder_mapping=folder_mapping)
         time.sleep(60)
