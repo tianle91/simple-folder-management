@@ -2,7 +2,7 @@ meta:
   base_dir: example
   dump_dir: dump
   managed_dir: managed
-  cron: '0 * * * *'
+  cron: '* * * * *'
 groups:
   group_A:
     name: group_A_name
