@@ -31,7 +31,6 @@ class SimpleFolderManagement:
             for p in folders_in_dump
         }
         return folder_mapping
-        # assert set(folder_mapping.keys()) == {'keyword_A', 'keyword_B', 'no_hits'}, folder_mapping
 
     def get_moves(self):
         folder_mapping = self.parse_dump_dir()
@@ -48,9 +47,6 @@ class SimpleFolderManagement:
                             folder_mapping[folder_name] = source_dir, dest_dir
                             break
         return folder_mapping
-        # assert folder_mapping['keyword_A'][1] == 'tests/example_directory/managed/group_A_name/keyword_A'
-        # assert folder_mapping['keyword_B'][1] == 'tests/example_directory/managed/group_A_name/keyword_B'
-        # assert folder_mapping['no_hits'][1] is None
 
 
 def execute_moves(folder_mapping: dict):
