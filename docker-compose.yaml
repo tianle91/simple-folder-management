@@ -2,8 +2,7 @@ version: '3.9'
 
 services:
   sfm:
-    build:
-      context: .
+    image: tianlechen/sfm:latest
     volumes:
       - ./config:/config
       - ./work:/work
