@@ -17,7 +17,7 @@ class SimpleFolderManagement:
         self.parse_config()
 
     def parse_config(self):
-        with open(config_path) as f:
+        with open(self.config_path) as f:
             self.config = yaml.safe_load(f)
         # cron
         self.cron = self.config['meta']['cron']
