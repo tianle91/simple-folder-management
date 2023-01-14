@@ -14,6 +14,9 @@ class SimpleFolderManagement:
     def __init__(self, config_path: str) -> None:
         # load from config_path
         self.config_path = config_path
+        self.parse_config()
+
+    def parse_config(self):
         with open(config_path) as f:
             self.config = yaml.safe_load(f)
         # cron
@@ -70,12 +73,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     sfm = SimpleFolderManagement(config_path=args.config)
-    log.info(f"Found {len(sfm.config['groups'])} group(s) in config.yaml")
-    log.info(f"Dump directory: {sfm.dump_dir}")
-    log.info(f"Managed directory: {sfm.managed_dir}")
     while True:
         if pycron.is_now(sfm.cron):
-            log.info(f'Monitoring {sfm.dump_dir}')
+            sfm.parse_config()
+            log.info(f"Found {len(sfm.config['groups'])} group(s) in config.yaml")
+            log.info(f"Dump directory: {sfm.dump_dir}")
+            log.info(f"Managed directory: {sfm.managed_dir}")
             folder_mapping = sfm.get_moves()
             execute_moves(folder_mapping=folder_mapping)
         time.sleep(60)
