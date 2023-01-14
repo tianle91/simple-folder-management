@@ -19,3 +19,8 @@ Every minute, for any new folders in `dump`, if any of `keyword_A, keyword_B` ar
 Refer to `config.yaml`, which should reference paths under `/work`.
 In `docker-compose.yaml`, make sure you map the path you want managed to `/work`.
 Run `docker-compose up`.
+
+## Build
+```
+docker build -t tianlechen/sfm . && docker push tianlechen/sfm
+```
