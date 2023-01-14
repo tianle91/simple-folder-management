@@ -3,5 +3,5 @@ services:
   sfm:
     image: tianlechen/sfm:latest
     volumes:
-      - ./tests/test_config.yaml:/config/config.yaml
-      - ./tests/example_directory:/work
+      - ./config.yaml:/config/config.yaml
+      - .:/work
