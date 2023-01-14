@@ -1,7 +1,5 @@
 meta:
   base_dir: /work/tests/example_directory
-  dump_dir: dump
-  managed_dir: managed
   cron: '* * * * *'
 groups:
   group_A:
@@ -9,3 +7,7 @@ groups:
     keywords:
       - keyword_A
       - keyword_B
+  group_C:
+    name: some_subdir/group_C
+    keywords:
+      - keyword_C
