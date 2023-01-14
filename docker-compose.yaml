@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  sfm:
+    build:
+      context: .
+    volumes:
+      - ./config:/config
+      - ./work:/work
