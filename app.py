@@ -63,12 +63,16 @@ def execute_moves(folder_mapping: dict):
 if __name__ == '__main__':
     import argparse
 
+    logging.basicConfig(level=logging.INFO)
+
     parser = argparse.ArgumentParser(prog='Simple Folder Management')
     parser.add_argument('config')
     args = parser.parse_args()
 
     sfm = SimpleFolderManagement(config_path=args.config)
-
+    log.info(f"Found {len(sfm.config['groups'])} group(s).")
+    log.info(f"Dump directory: {sfm.dump_dir}")
+    log.info(f"Managed directory: {sfm.managed_dir}")
     while True:
         if pycron.is_now(sfm.cron):
             log.info(f'Monitoring {sfm.dump_dir}')
