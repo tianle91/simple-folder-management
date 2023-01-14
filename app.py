@@ -19,14 +19,10 @@ class SimpleFolderManagement:
     def parse_config(self):
         with open(self.config_path) as f:
             self.config = yaml.safe_load(f)
-        # cron
         self.cron = self.config['meta']['cron']
-        # get dump and managed dirs
-        base_dir = self.config['meta']['base_dir']
-        self.dump_dir = os.path.join(base_dir, self.config['meta']['dump_dir'])
-        self.managed_dir = os.path.join(base_dir, self.config['meta']['managed_dir'])
+        self.base_dir = self.config['meta']['base_dir']
+        self.dump_dir = os.path.join(self.base_dir, 'dump')
         os.makedirs(self.dump_dir, exist_ok=True)
-        os.makedirs(self.managed_dir, exist_ok=True)
 
     def parse_dump_dir(self):
         # glob pattern to get all top level directories: dumpdir/*/
@@ -41,7 +37,8 @@ class SimpleFolderManagement:
     def get_moves(self):
         folder_mapping = self.parse_dump_dir()
         for _, group_config in self.config['groups'].items():
-            move_to_directory = os.path.join(self.managed_dir, group_config['name'])
+            move_to_directory = os.path.join(self.base_dir, group_config['name'])
+            os.makedirs(move_to_directory, exist_ok=True)
             for folder_name in folder_mapping:
                 source_dir, dest_dir = folder_mapping[folder_name]
                 if dest_dir is not None:
@@ -77,8 +74,7 @@ if __name__ == '__main__':
         if pycron.is_now(sfm.cron):
             sfm.parse_config()
             log.info(f"Found {len(sfm.config['groups'])} group(s) in config.yaml")
-            log.info(f"Dump directory: {sfm.dump_dir}")
-            log.info(f"Managed directory: {sfm.managed_dir}")
+            log.info(f"Monitoring directory: {sfm.dump_dir}")
             folder_mapping = sfm.get_moves()
             execute_moves(folder_mapping=folder_mapping)
         time.sleep(60)
