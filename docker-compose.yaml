@@ -1,8 +1,7 @@
-version: '3.9'
-
+version: '3'
 services:
   sfm:
     image: tianlechen/sfm:latest
     volumes:
-      - ./config:/config
-      - ./work:/work
+      - ./tests/test_config.yaml:/config/config.yaml
+      - ./tests/example_directory:/work

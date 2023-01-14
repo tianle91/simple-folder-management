@@ -1,5 +1,5 @@
 meta:
-  base_dir: example
+  base_dir: /work
   dump_dir: dump
   managed_dir: managed
   cron: '* * * * *'
