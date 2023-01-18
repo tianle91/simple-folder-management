@@ -1,5 +1,7 @@
 # Simple Folder Management
 
+![sfm](sfm.png)
+
 ## How to Run
 Refer to `config.yaml`, which should reference paths under `/work`.
 In `docker-compose.yaml`, make sure you map the path you want managed to `/work`.
