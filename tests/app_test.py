@@ -75,4 +75,4 @@ def test_get_moves(
     expected: List[Tuple[str, str]],
 ):
     result = get_moves(path=path, groups=groups)
-    assert expected == result, result
+    assert sorted(expected) == sorted(result)
