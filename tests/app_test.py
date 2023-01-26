@@ -19,7 +19,25 @@ from sfm.types import Group
                 'tests/example_directory_a/dump/keyword_A/',
                 'tests/example_directory_a/group_A_name/keyword_A',
             )],
-            id='single keyword single hit'
+            id='single group, single keyword, single hit'
+        ),
+        pytest.param(
+            'tests/example_directory_a',
+            {'group_A': Group(
+                path='group_A_name',
+                keywords=['keyword_A', 'keyword_B'],
+            )},
+            [
+                (
+                    'tests/example_directory_a/dump/keyword_A/',
+                    'tests/example_directory_a/group_A_name/keyword_A',
+                ),
+                (
+                    'tests/example_directory_a/dump/keyword_B/',
+                    'tests/example_directory_a/group_A_name/keyword_B',
+                ),
+            ],
+            id='single group, multiple keywords, multiple hits'
         ),
     ]
 )
