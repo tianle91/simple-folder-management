@@ -1,13 +1,22 @@
-meta:
-  base_dir: /work/tests/example_directory
+managed_dir_A:
+  base_dir: /work/tests/example_directory_a
   cron: '* * * * *'
-groups:
-  group_A:
-    name: group_A_name
-    keywords:
-      - keyword_A
-      - keyword_B
-  group_C:
-    name: some_subdir/group_C
-    keywords:
-      - keyword_C
+  groups:
+    group_A:
+      path: group_A_name
+      keywords:
+        - keyword_A
+        - keyword_B
+    group_C:
+      path: some_subdir/group_C
+      keywords:
+        - keyword_C
+managed_dir_B:
+  base_dir: /work/tests/example_directory_b
+  cron: '* * * * *'
+  groups:
+    group_A:
+      path: group_A_name
+      keywords:
+        - keyword_A
+        - keyword_B
