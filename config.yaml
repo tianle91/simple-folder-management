@@ -1,22 +1,22 @@
-managed_dir_A:
-  base_dir: /work/tests/example_directory_a
-  cron: '* * * * *'
-  groups:
-    group_A:
-      path: group_A_name
-      keywords:
-        - keyword_A
-        - keyword_B
-    group_C:
-      path: some_subdir/group_C
-      keywords:
-        - keyword_C
-managed_dir_B:
-  base_dir: /work/tests/example_directory_b
-  cron: '* * * * *'
-  groups:
-    group_A:
-      path: group_A_name
-      keywords:
-        - keyword_A
-        - keyword_B
+cron: '* * * * *'
+managed_dirs:
+  managed_dir_A:
+    base_dir: /work/tests/example_directory_a
+    groups:
+      group_A:
+        path: group_A_name
+        keywords:
+          - keyword_A
+          - keyword_B
+      group_C:
+        path: some_subdir/group_C
+        keywords:
+          - keyword_C
+  managed_dir_B:
+    base_dir: /work/tests/example_directory_b
+    groups:
+      group_A:
+        path: group_A_name
+        keywords:
+          - keyword_A
+          - keyword_B
