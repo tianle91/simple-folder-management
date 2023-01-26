@@ -12,6 +12,7 @@ class Group:
 class ManagedDir:
     base_dir: str
     groups: Dict[str, Group]
+    move_files: bool = False
 
 
 def parse_raw_group(raw_group: dict) -> Group:
@@ -26,6 +27,7 @@ def parse_raw_managed_dirs(raw_managed_dirs: dict) -> Dict[str, ManagedDir]:
     for k, raw_managed_dir in raw_managed_dirs.items():
         managed_dir = ManagedDir(
             base_dir=raw_managed_dir['base_dir'],
+            move_files=raw_managed_dir.get('move_files', False),
             groups={
                 l: parse_raw_group(raw_group=raw_group)
                 for l, raw_group in raw_managed_dir['groups'].items()

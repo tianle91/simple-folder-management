@@ -13,7 +13,22 @@ from sfm.types import Group, ManagedDir, parse_raw_managed_dirs
 log = logging.getLogger(__name__)
 
 
-def get_moves(path: str, groups: Dict[str, Group]) -> List[Tuple[str, str]]:
+def get_file_moves(path: str, groups: Dict[str, Group]) -> List[Tuple[str, str]]:
+    dump_dir = os.path.join(path, 'dump')
+    moves = []
+    for p in glob(os.path.join(dump_dir, '*.*')):
+        # p is {dump_dir}/X.ext so this grabs X.ext
+        file_name = p.split('/')[-1]
+        for _, group in groups.items():
+            move_to_directory = os.path.join(path, group.path)
+            os.makedirs(move_to_directory, exist_ok=True)
+            if any([kwd in file_name for kwd in group.keywords]):
+                moves.append((p, move_to_directory))
+                break
+    return moves
+
+
+def get_folder_moves(path: str, groups: Dict[str, Group]) -> List[Tuple[str, str]]:
     dump_dir = os.path.join(path, 'dump')
     mappings = []
     for p in glob(os.path.join(dump_dir, '*', '')):
@@ -50,14 +65,24 @@ class SimpleFolderManagement:
     def get_all_moves(self) -> List[Tuple[str, str]]:
         all_moves = []
         for _, managed_dir in self.managed_dirs.items():
-            moves = get_moves(
-                path=managed_dir.base_dir,
-                groups=managed_dir.groups,
-            )
-            log.info(
-                f'In {managed_dir.base_dir}, '
-                f'found {len(moves)} directories to be moved.'
-            )
+            if managed_dir.move_files:
+                moves = get_file_moves(
+                    path=managed_dir.base_dir,
+                    groups=managed_dir.groups,
+                )
+                log.info(
+                    f'In {managed_dir.base_dir}, '
+                    f'found {len(moves)} files to be moved.'
+                )
+            else:
+                moves = get_folder_moves(
+                    path=managed_dir.base_dir,
+                    groups=managed_dir.groups,
+                )
+                log.info(
+                    f'In {managed_dir.base_dir}, '
+                    f'found {len(moves)} directories to be moved.'
+                )
             all_moves.extend(moves)
         return all_moves
 
@@ -77,8 +102,8 @@ if __name__ == '__main__':
             all_moves = sfm_instance.get_all_moves()
             for source_dir, dest_dir in all_moves:
                 log.info(f'Moving {source_dir} -> {dest_dir}')
-                if os.path.exists(dest_dir):
-                    log.info('Destination exists, clearing.')
+                if not os.path.isfile(source_dir) and os.path.exists(dest_dir):
+                    log.info('Destination directory exists, clearing.')
                     shutil.rmtree(dest_dir)
                 shutil.move(source_dir, dest_dir)
         time.sleep(60)
