@@ -19,7 +19,8 @@ Run `docker-compose up`.
 
 ## Build
 ```
-docker build -t tianlechen/sfm . && docker push tianlechen/sfm
+docker build -t tianlechen/sfm .
+docker push tianlechen/sfm
 ```
 Strangely building this on a M1 Mac can run successfully in WSL but not on my Synology NAS.
 However, if I built it on WSL it works fine on Synology NAS.
