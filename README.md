@@ -2,9 +2,16 @@
 
 ![sfm](sfm.png)
 
+Will probably add more details later.
+For now, see [tests/test_config.yaml](tests/test_config.yaml) for example configuration.
+Example configuration references paths in `tests` so run the following to see a demo:
+```python
+python app.py tests/test_config.yaml
+```
+
 ## How to Run
-Refer to `config.yaml`, which should reference paths under `/work`.
 In `docker-compose.yaml`, make sure you map the path you want managed to `/work`.
+Your config should paths under `/work`.
 Run `docker-compose up`.
 
 ## Build
