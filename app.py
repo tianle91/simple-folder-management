@@ -101,7 +101,7 @@ if __name__ == '__main__':
         if pycron.is_now(sfm_instance.cron):
             all_moves = sfm_instance.get_all_moves()
             for source_dir, dest_dir in all_moves:
-                log.info(f'Moving {source_dir} -> {dest_dir}')                    
+                log.info(f'Moving {source_dir} -> {dest_dir}')
                 if not os.path.isfile(source_dir) and os.path.exists(dest_dir):
                     log.info('Destination directory exists, clearing.')
                     shutil.rmtree(dest_dir)
