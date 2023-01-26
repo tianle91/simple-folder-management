@@ -70,15 +70,19 @@ class SimpleFolderManagement:
                     path=managed_dir.base_dir,
                     groups=managed_dir.groups,
                 )
+                log.info(
+                    f'In {managed_dir.base_dir}, '
+                    f'found {len(moves)} files to be moved.'
+                )
             else:
                 moves = get_folder_moves(
                     path=managed_dir.base_dir,
                     groups=managed_dir.groups,
                 )
-            log.info(
-                f'In {managed_dir.base_dir}, '
-                f'found {len(moves)} directories to be moved.'
-            )
+                log.info(
+                    f'In {managed_dir.base_dir}, '
+                    f'found {len(moves)} directories to be moved.'
+                )
             all_moves.extend(moves)
         return all_moves
 
