@@ -77,5 +77,8 @@ if __name__ == '__main__':
             all_moves = sfm_instance.get_all_moves()
             for source_dir, dest_dir in all_moves:
                 log.info(f'Moving {source_dir} -> {dest_dir}')
+                if os.path.exists(dest_dir):
+                    log.info('Destination exists, clearing.')
+                    shutil.rmtree(dest_dir)
                 shutil.move(source_dir, dest_dir)
         time.sleep(60)
