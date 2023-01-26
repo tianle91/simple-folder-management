@@ -23,7 +23,17 @@ TEST_PARSED_MANAGED_DIRS = {
                 keywords=['keyword_A', 'keyword_B'],
             )
         }
-    )
+    ),
+    'managed_dir_C': ManagedDir(
+        base_dir='tests/example_directory_c',
+        move_files=True,
+        groups={
+            'group_A': Group(
+                path='group_A_name',
+                keywords=['keyword_A'],
+            ),
+        }
+    ),
 }
 
 

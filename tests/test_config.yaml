@@ -20,3 +20,11 @@ managed_dirs:
         keywords:
           - keyword_A
           - keyword_B
+  managed_dir_C:
+    base_dir: tests/example_directory_c
+    move_files: True
+    groups:
+      group_A:
+        path: group_A_name
+        keywords:
+          - keyword_A
