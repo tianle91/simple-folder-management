@@ -2,7 +2,7 @@ from typing import Dict, List, Tuple
 
 import pytest
 
-from app import get_moves
+from app import get_folder_moves
 from sfm.types import Group
 
 
@@ -74,5 +74,5 @@ def test_get_moves(
     groups: Dict[str, Group],
     expected: List[Tuple[str, str]],
 ):
-    result = get_moves(path=path, groups=groups)
+    result = get_folder_moves(path=path, groups=groups)
     assert sorted(expected) == sorted(result)
