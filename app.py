@@ -25,7 +25,7 @@ def get_moves(path: str, groups: Dict[str, Group]) -> List[Tuple[str, str]]:
             if any([kwd in folder_name for kwd in group.keywords]):
                 dest_dir = os.path.join(move_to_directory, folder_name)
                 mappings.append((p, dest_dir))
-            break
+                break
     return mappings
 
 

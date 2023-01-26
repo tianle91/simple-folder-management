@@ -39,6 +39,34 @@ from sfm.types import Group
             ],
             id='single group, multiple keywords, multiple hits'
         ),
+        pytest.param(
+            'tests/example_directory_a',
+            {
+                'group_A': Group(
+                    path='group_A_name',
+                    keywords=['keyword_A', 'keyword_B'],
+                ),
+                'group_C': Group(
+                    path='some_subdir/group_C',
+                    keywords=['keyword_C'],
+                )
+            },
+            [
+                (
+                    'tests/example_directory_a/dump/keyword_A/',
+                    'tests/example_directory_a/group_A_name/keyword_A',
+                ),
+                (
+                    'tests/example_directory_a/dump/keyword_B/',
+                    'tests/example_directory_a/group_A_name/keyword_B',
+                ),
+                (
+                    'tests/example_directory_a/dump/keyword_C/',
+                    'tests/example_directory_a/some_subdir/group_C/keyword_C',
+                ),
+            ],
+            id='multiple groups'
+        ),
     ]
 )
 def test_get_moves(
