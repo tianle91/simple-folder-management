@@ -1,7 +1,4 @@
 # Simple Folder Management
-
-![sfm](sfm.png)
-
 Will probably add more details later.
 For now, see [tests/test_config.yaml](tests/test_config.yaml) for example configuration.
 Example configuration references paths in `tests` so run the following to see a demo:
