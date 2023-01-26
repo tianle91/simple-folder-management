@@ -3,11 +3,30 @@ import os
 import shutil
 import time
 from glob import glob
+from typing import Dict, List, Tuple
 
 import pycron
 import yaml
 
+from sfm.types import Group, ManagedDir, parse_raw_managed_dirs
+
 log = logging.getLogger(__name__)
+
+
+def get_moves(path: str, groups: Dict[str, Group]) -> List[Tuple[str, str]]:
+    dump_dir = os.path.join(path, 'dump')
+    mappings = []
+    for p in glob(os.path.join(dump_dir, '*', '')):
+        # p is {dump_dir}/X/ so this grabs X
+        folder_name = p.split('/')[-2]
+        for _, group in groups.items():
+            move_to_directory = os.path.join(path, group.path)
+            os.makedirs(move_to_directory, exist_ok=True)
+            if any([kwd in folder_name for kwd in group.keywords]):
+                dest_dir = os.path.join(move_to_directory, folder_name)
+                mappings.append((p, dest_dir))
+            break
+    return mappings
 
 
 class SimpleFolderManagement:
@@ -16,48 +35,33 @@ class SimpleFolderManagement:
         self.config_path = config_path
         self.parse_config()
 
-    def parse_config(self):
+    @property
+    def raw_config(self) -> dict:
         with open(self.config_path) as f:
-            self.config = yaml.safe_load(f)
-        self.cron = self.config['meta']['cron']
-        self.base_dir = self.config['meta']['base_dir']
-        self.dump_dir = os.path.join(self.base_dir, 'dump')
-        os.makedirs(self.dump_dir, exist_ok=True)
+            return yaml.safe_load(f)
 
-    def parse_dump_dir(self):
-        # glob pattern to get all top level directories: dumpdir/*/
-        folders_in_dump = glob(os.path.join(self.dump_dir, '*', ''))
-        folder_mapping = {
-            # folder_name: (source_path, dest_path)
-            p.split('/')[-2]: (p, None)
-            for p in folders_in_dump
-        }
-        return folder_mapping
+    @property
+    def cron(self) -> str:
+        return self.raw_config['cron']
 
-    def get_moves(self):
-        folder_mapping = self.parse_dump_dir()
-        for _, group_config in self.config['groups'].items():
-            move_to_directory = os.path.join(self.base_dir, group_config['name'])
-            os.makedirs(move_to_directory, exist_ok=True)
-            for folder_name in folder_mapping:
-                source_dir, dest_dir = folder_mapping[folder_name]
-                if dest_dir is not None:
-                    continue
-                else:
-                    for kwd in group_config['keywords']:
-                        if kwd in folder_name:
-                            dest_dir = os.path.join(move_to_directory, folder_name)
-                            folder_mapping[folder_name] = source_dir, dest_dir
-                            break
-        return folder_mapping
+    @property
+    def managed_dirs(self) -> Dict[str, ManagedDir]:
+        raw_managed_dirs = self.raw_config['managed_dirs']
+        return parse_raw_managed_dirs(raw_managed_dirs=raw_managed_dirs)
 
-
-def execute_moves(folder_mapping: dict):
-    for folder_name in folder_mapping:
-        source_dir, dest_dir = folder_mapping[folder_name]
-        if dest_dir is not None:
-            log.info(f'Moving {source_dir} -> {dest_dir}')
-            shutil.move(source_dir, dest_dir)
+    def get_all_moves(self) -> List[Tuple[str, str]]:
+        all_moves = []
+        for _, managed_dir in self.managed_dirs.items():
+            moves = get_moves(
+                path=managed_dir.base_dir,
+                groups=managed_dir.groups,
+            )
+            log.info(
+                f'In {managed_dir.base_dir}, '
+                f'found {len(moves)} directories to be moved.'
+            )
+            all_moves.extend(moves)
+        return all_moves
 
 
 if __name__ == '__main__':
@@ -69,12 +73,11 @@ if __name__ == '__main__':
     parser.add_argument('config')
     args = parser.parse_args()
 
-    sfm = SimpleFolderManagement(config_path=args.config)
+    sfm_instance = SimpleFolderManagement(config_path=args.config)
     while True:
-        if pycron.is_now(sfm.cron):
-            sfm.parse_config()
-            log.info(f"Found {len(sfm.config['groups'])} group(s) in config.yaml")
-            log.info(f"Monitoring directory: {sfm.dump_dir}")
-            folder_mapping = sfm.get_moves()
-            execute_moves(folder_mapping=folder_mapping)
+        if pycron.is_now(sfm_instance.cron):
+            all_moves = sfm_instance.get_all_moves()
+            for source_dir, dest_dir in all_moves:
+                log.info(f'Moving {source_dir} -> {dest_dir}')
+                shutil.move(source_dir, dest_dir)
         time.sleep(60)
