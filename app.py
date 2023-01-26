@@ -31,9 +31,7 @@ def get_moves(path: str, groups: Dict[str, Group]) -> List[Tuple[str, str]]:
 
 class SimpleFolderManagement:
     def __init__(self, config_path: str) -> None:
-        # load from config_path
         self.config_path = config_path
-        self.parse_config()
 
     @property
     def raw_config(self) -> dict:
