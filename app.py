@@ -102,8 +102,8 @@ if __name__ == '__main__':
             all_moves = sfm_instance.get_all_moves()
             for source_dir, dest_dir in all_moves:
                 log.info(f'Moving {source_dir} -> {dest_dir}')
-                if not os.path.isfile(source_dir) and os.path.exists(dest_dir):
-                    log.info('Destination directory exists, clearing.')
-                    shutil.rmtree(dest_dir)
-                shutil.move(source_dir, dest_dir)
+                try:
+                    shutil.move(source_dir, dest_dir)
+                except Exception as e:
+                    log.warning(f'Failed to move due to {str(e)}')
         time.sleep(60)
