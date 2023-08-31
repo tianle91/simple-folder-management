@@ -4,6 +4,12 @@
 clean:
 	rm -rf .tox .cache .venv requirements.txt .git/hooks/pre-commit
 
+.PHONY: .venv-prod
+.venv-prod:
+	poetry env remove --all
+	poetry config virtualenvs.in-project true
+	poetry install --only-root
+
 .venv:
 	poetry env remove --all
 	poetry config virtualenvs.in-project true
@@ -16,3 +22,7 @@ pre-commit: .venv
 .PHONY: test
 test: pre-commit
 	tox run
+
+.PHONY: push
+push:
+	docker buildx build --platform linux/amd64,linux/arm64 -t tianlechen/sfm:latest --push .
