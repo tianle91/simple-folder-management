@@ -1,0 +1,24 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+
+[tool.poetry]
+name = "Simple Folder Management"
+version = "0"
+description = ""
+authors = ["Tianle Chen <tianlechen@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">3.9.7,<4.0" # should match Dockerfile
+pycron = "^3.0.0"
+pyyaml = "^6.0.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+pre-commit = "^3.2.2"
+black = "23.3.0" # should match .pre-commit-config.yaml
+isort = "5.12.0" # should match .pre-commit-config.yaml
