@@ -14,11 +14,11 @@ log = logging.getLogger(__name__)
 
 
 def get_file_moves(path: str, groups: Dict[str, Group]) -> List[Tuple[str, str]]:
-    dump_dir = os.path.join(path, 'dump')
+    dump_dir = os.path.join(path, "dump")
     moves = []
-    for p in glob(os.path.join(dump_dir, '*.*')):
+    for p in glob(os.path.join(dump_dir, "*.*")):
         # p is {dump_dir}/X.ext so this grabs X.ext
-        file_name = p.split('/')[-1]
+        file_name = p.split("/")[-1]
         for _, group in groups.items():
             move_to_directory = os.path.join(path, group.path)
             os.makedirs(move_to_directory, exist_ok=True)
@@ -29,11 +29,11 @@ def get_file_moves(path: str, groups: Dict[str, Group]) -> List[Tuple[str, str]]
 
 
 def get_folder_moves(path: str, groups: Dict[str, Group]) -> List[Tuple[str, str]]:
-    dump_dir = os.path.join(path, 'dump')
+    dump_dir = os.path.join(path, "dump")
     mappings = []
-    for p in glob(os.path.join(dump_dir, '*', '')):
+    for p in glob(os.path.join(dump_dir, "*", "")):
         # p is {dump_dir}/X/ so this grabs X
-        folder_name = p.split('/')[-2]
+        folder_name = p.split("/")[-2]
         for _, group in groups.items():
             move_to_directory = os.path.join(path, group.path)
             os.makedirs(move_to_directory, exist_ok=True)
@@ -55,11 +55,11 @@ class SimpleFolderManagement:
 
     @property
     def cron(self) -> str:
-        return self.raw_config['cron']
+        return self.raw_config["cron"]
 
     @property
     def managed_dirs(self) -> Dict[str, ManagedDir]:
-        raw_managed_dirs = self.raw_config['managed_dirs']
+        raw_managed_dirs = self.raw_config["managed_dirs"]
         return parse_raw_managed_dirs(raw_managed_dirs=raw_managed_dirs)
 
     def get_all_moves(self) -> List[Tuple[str, str]]:
@@ -71,8 +71,8 @@ class SimpleFolderManagement:
                     groups=managed_dir.groups,
                 )
                 log.info(
-                    f'In {managed_dir.base_dir}, '
-                    f'found {len(moves)} files to be moved.'
+                    f"In {managed_dir.base_dir}, "
+                    f"found {len(moves)} files to be moved."
                 )
             else:
                 moves = get_folder_moves(
@@ -80,20 +80,20 @@ class SimpleFolderManagement:
                     groups=managed_dir.groups,
                 )
                 log.info(
-                    f'In {managed_dir.base_dir}, '
-                    f'found {len(moves)} directories to be moved.'
+                    f"In {managed_dir.base_dir}, "
+                    f"found {len(moves)} directories to be moved."
                 )
             all_moves.extend(moves)
         return all_moves
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
 
     logging.basicConfig(level=logging.INFO)
 
-    parser = argparse.ArgumentParser(prog='Simple Folder Management')
-    parser.add_argument('config')
+    parser = argparse.ArgumentParser(prog="Simple Folder Management")
+    parser.add_argument("config")
     args = parser.parse_args()
 
     sfm_instance = SimpleFolderManagement(config_path=args.config)
@@ -101,9 +101,9 @@ if __name__ == '__main__':
         if pycron.is_now(sfm_instance.cron):
             all_moves = sfm_instance.get_all_moves()
             for source_dir, dest_dir in all_moves:
-                log.info(f'Moving {source_dir} -> {dest_dir}')
+                log.info(f"Moving {source_dir} -> {dest_dir}")
                 try:
                     shutil.move(source_dir, dest_dir)
                 except Exception as e:
-                    log.warning(f'Failed to move due to {str(e)}')
+                    log.warning(f"Failed to move due to {str(e)}")
         time.sleep(60)
