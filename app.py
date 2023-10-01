@@ -38,8 +38,9 @@ def get_folder_moves(path: str, groups: Dict[str, Group]) -> List[Tuple[str, str
             move_to_directory = os.path.join(path, group.path)
             os.makedirs(move_to_directory, exist_ok=True)
             if any([kwd in folder_name for kwd in group.keywords]):
-                dest_dir = os.path.join(move_to_directory, folder_name)
-                mappings.append((p, dest_dir))
+                # https://docs.python.org/3/library/shutil.html#shutil.move
+                # If the destination is an existing directory, then src is moved inside that directory.
+                mappings.append((p, move_to_directory))
                 break
     return mappings
 
