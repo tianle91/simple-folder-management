@@ -8,7 +8,7 @@ clean:
 .venv-prod:
 	poetry env remove --all
 	poetry config virtualenvs.in-project true
-	poetry install --only-root
+	poetry install --without dev
 
 .venv:
 	poetry env remove --all
