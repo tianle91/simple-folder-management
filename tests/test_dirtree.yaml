@@ -1,0 +1,14 @@
+dump:
+  keyword_A:
+    _files:
+      - nothing.txt
+  keyword_B:
+    keyword_C:
+      _files:
+        - nothing.txt
+  keyword_C:
+    _files:
+      - nothing.txt
+  no_hits:
+    _files:
+      - nothing.txt

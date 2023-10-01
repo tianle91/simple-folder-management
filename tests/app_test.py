@@ -1,16 +1,20 @@
+import os
+from tempfile import TemporaryDirectory
 from typing import Dict, List, Tuple
 
 import pytest
+import yaml
 
 from app import get_folder_moves
 from sfm.types import Group
 
+TEST_DIRTREE_PATH = "tests/test_dirtree.yaml"
+
 
 @pytest.mark.parametrize(
-    ("path", "groups", "expected"),
+    ("groups", "expected"),
     [
         pytest.param(
-            "tests/example_directory_a",
             {
                 "group_A": Group(
                     path="group_A_name",
@@ -19,14 +23,13 @@ from sfm.types import Group
             },
             [
                 (
-                    "tests/example_directory_a/dump/keyword_A/",
-                    "tests/example_directory_a/group_A_name/keyword_A",
+                    "dump/keyword_A/",
+                    "group_A_name",
                 )
             ],
             id="single group, single keyword, single hit",
         ),
         pytest.param(
-            "tests/example_directory_a",
             {
                 "group_A": Group(
                     path="group_A_name",
@@ -35,18 +38,17 @@ from sfm.types import Group
             },
             [
                 (
-                    "tests/example_directory_a/dump/keyword_A/",
-                    "tests/example_directory_a/group_A_name/keyword_A",
+                    "dump/keyword_A/",
+                    "group_A_name",
                 ),
                 (
-                    "tests/example_directory_a/dump/keyword_B/",
-                    "tests/example_directory_a/group_A_name/keyword_B",
+                    "dump/keyword_B/",
+                    "group_A_name",
                 ),
             ],
             id="single group, multiple keywords, multiple hits",
         ),
         pytest.param(
-            "tests/example_directory_a",
             {
                 "group_A": Group(
                     path="group_A_name",
@@ -59,16 +61,16 @@ from sfm.types import Group
             },
             [
                 (
-                    "tests/example_directory_a/dump/keyword_A/",
-                    "tests/example_directory_a/group_A_name/keyword_A",
+                    "dump/keyword_A/",
+                    "group_A_name",
                 ),
                 (
-                    "tests/example_directory_a/dump/keyword_B/",
-                    "tests/example_directory_a/group_A_name/keyword_B",
+                    "dump/keyword_B/",
+                    "group_A_name",
                 ),
                 (
-                    "tests/example_directory_a/dump/keyword_C/",
-                    "tests/example_directory_a/some_subdir/group_C/keyword_C",
+                    "dump/keyword_C/",
+                    "some_subdir/group_C",
                 ),
             ],
             id="multiple groups",
@@ -76,9 +78,32 @@ from sfm.types import Group
     ],
 )
 def test_get_moves(
-    path: str,
     groups: Dict[str, Group],
     expected: List[Tuple[str, str]],
 ):
-    result = get_folder_moves(path=path, groups=groups)
-    assert sorted(expected) == sorted(result)
+    with TemporaryDirectory() as tmpdir:
+        with open(TEST_DIRTREE_PATH) as f:
+            d = yaml.safe_load(f)
+        make_test_dir(d=d, tmpdir=tmpdir)
+        result = get_folder_moves(path=tmpdir, groups=groups)
+        expected_full = [
+            (
+                os.path.join(tmpdir, from_relative_path),
+                os.path.join(tmpdir, to_relative_path),
+            )
+            for from_relative_path, to_relative_path in expected
+        ]
+        assert sorted(expected_full) == sorted(result)
+
+
+def make_test_dir(d: dict, tmpdir: str):
+    for k, v in d.items():
+        if k == "_files":
+            for v in d["_files"]:
+                with open(os.path.join(tmpdir, v), "w") as f:
+                    f.write("")
+        else:
+            newtmpdir = os.path.join(tmpdir, k)
+            # should be first time creating this directory
+            os.makedirs(newtmpdir, exist_ok=False)
+            make_test_dir(d=v, tmpdir=newtmpdir)
