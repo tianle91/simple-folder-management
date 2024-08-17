@@ -30,6 +30,7 @@ def confirm_removal(group: Group):
 
 
 def render_group(group: Group, allow_removal: bool = True):
+    st.markdown("---")
     st.markdown(f"## `{group.name}`")
     st.markdown(
         f"Moves **{group.move_item_type}s** from `{group.source_path}` to `{group.destination_base_path}/{group.name}`"
@@ -42,5 +43,5 @@ def render_group(group: Group, allow_removal: bool = True):
                 db[group.name] = group
             st.rerun()
     if allow_removal:
-        if st.button("Remove group?", key=f"{group.name}_remove"):
+        if st.button("Remove group", key=f"{group.name}_remove"):
             confirm_removal(group)
