@@ -11,4 +11,5 @@ DB_PATH = os.path.join(CONFIG_DIR, "sfm.db")
 def get_groups() -> dict[str, Group]:
     os.makedirs(CONFIG_DIR, exist_ok=True)
     with SqliteDict(DB_PATH) as db:
-        return {k: v for k, v in db.items()}
+        # sort by dictionary keys
+        return {k: v for k, v in sorted(db.items(), key=lambda item: item[0])}
