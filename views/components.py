@@ -1,10 +1,12 @@
+import os
+from glob import glob
 from typing import Optional, Set
 
 import streamlit as st
 from sqlitedict import SqliteDict
 
 from sfm.data import DB_PATH
-from sfm.types import Group
+from sfm.types import Group, MoveItemType
 
 
 def get_new_triggers(group: Optional[Group] = None) -> Optional[Set[str]]:
@@ -30,10 +32,12 @@ def confirm_removal(group: Group):
         st.rerun()
 
 
-def render_group(group: Group, allow_removal: bool = True):
+def render_group(
+    group: Group, allow_removal: bool = True, show_existing_counts: bool = True
+):
     st.markdown("---")
     st.markdown(
-        f"Group`{group.name}` Moves **{group.move_item_type}s** From `{group.source_path}` to `{group.destination_base_path}/{group.name}`"
+        f"Group`{group.name}` Moves **{group.move_item_type}s** From `{group.source_path}` to `{group.destination_path}`"
     )
     new_move_triggers = get_new_triggers(group)
     if new_move_triggers != group.move_triggers:
@@ -42,6 +46,17 @@ def render_group(group: Group, allow_removal: bool = True):
                 group.move_triggers = new_move_triggers
                 db[group.name] = group
             st.rerun()
+
+    if show_existing_counts:
+        if group.move_item_type == MoveItemType.FILE:
+            paths = glob(os.path.join(group.destination_path, "*.*"))
+        else:
+            paths = glob(os.path.join(group.destination_path, "*", ""))
+        with st.expander(
+            f"{len(paths)} existing **{group.move_item_type}s** at `{group.destination_path}`"
+        ):
+            st.markdown("\n".join(paths))
+
     if allow_removal:
         if st.button("Remove group", key=f"{group.name}_remove"):
             confirm_removal(group)
