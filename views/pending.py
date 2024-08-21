@@ -1,6 +1,8 @@
 import streamlit as st
 
 from sfm.data import get_groups
+from sfm.moves import get_files, get_folders
+from sfm.types import MoveItemType
 
 PENDING_INTRO = """
 # Pending
@@ -20,3 +22,17 @@ if len(groups) == 0:
     st.info("No groups found. Create a new group to get started.")
     if st.button("Create New Group"):
         st.switch_page("views/create.py")
+
+source_paths = set(group.source_path for group in groups.values())
+for source_path in source_paths:
+    st.write(source_path)
+    files = get_files(source_path)
+    folders = get_folders(source_path)
+    hits = {}
+    for group in groups.values():
+        for p in files if group.move_item_type == MoveItemType.FILE else folders:
+            move_triggers_found = [trigger in p for trigger in group.move_triggers]
+            if any(move_triggers_found):
+                hits_values = hits.get(p, [])
+                hits_values.append((group, move_triggers_found))
+    st.write(hits)
