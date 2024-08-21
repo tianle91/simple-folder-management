@@ -1,4 +1,5 @@
 import logging
+import os
 from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, Set
@@ -18,3 +19,7 @@ class Group:
     destination_base_path: str  # file/dir will be moved to destination_base_path/<group_name>
     move_item_type: MoveItemType  # file or dir
     move_triggers: Optional[Set[str]] = None  # keywords that trigger move
+
+    @property
+    def destination_path(self) -> str:
+        return os.path.join(self.destination_base_path, self.name)
