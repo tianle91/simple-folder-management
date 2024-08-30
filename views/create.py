@@ -15,7 +15,7 @@ Create a new group to automatically move files or directories in source path to 
 @st.dialog("Present created group")
 def present_created_group(group: Group):
     st.markdown(f"## Group `{group.name}` created")
-    st.write(group)
+    render_group(group=group)
     st.page_link(page="views/pending.py", label="Go to pending moves")
     st.page_link(page="views/list.py", label="See existing groups")
 
