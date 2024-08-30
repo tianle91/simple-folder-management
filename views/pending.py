@@ -79,7 +79,7 @@ for src_path, src_groups in srcs_to_groups_mapping.items():
             # make sure dst_folder_path ends with "/" so that it's a directory
             # also make sure it exists so that src is moved inside that directory
             # https://docs.python.org/3/library/shutil.html#shutil.move
-            dst_folder_path = os.path.join(group.dst, group.name, "")
+            dst_folder_path = os.path.join(group.dst, "")
             selected_moves.append((p, dst_folder_path))
         else:
             # TODO: Handle multiple matches

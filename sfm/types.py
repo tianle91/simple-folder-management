@@ -9,6 +9,6 @@ logger = logging.getLogger(__name__)
 class Group:
     name: str
     src: str  # files/dirs will be moved from <src>
-    dst: str  # files/dirs will be moved to <dst>/<name>
+    dst: str  # files/dirs will be moved to <dst>
     triggers: Set[str]  # keywords to trigger move
     move_files: bool  # if False, then move directories
