@@ -26,10 +26,15 @@ if len(groups) == 0:
     if st.button("Create New Group"):
         st.switch_page("views/create.py")
 
-source_paths = set(group.source_path for group in groups.values())
-st.markdown(f"Currently tracking {len(source_paths)} source paths.")
-for source_path in source_paths:
-    st.markdown(f"## Moves in `{source_path}`")
+source_paths_to_groups = {}
+for group in groups.values():
+    source_path_groups = source_paths_to_groups.get(group.source_path, [])
+    source_path_groups.append(group)
+    source_paths_to_groups[group.source_path] = source_path_groups
+
+st.markdown(f"Currently tracking {len(source_paths_to_groups)} source paths.")
+for source_path, source_path_groups in source_paths_to_groups.items():
+    st.markdown(f"## Pending moves in `{source_path}`")
     files = get_top_level_files(source_path)
     folders = get_top_level_folders(source_path)
 
@@ -44,8 +49,17 @@ for source_path in source_paths:
         for p, obj in folders:
             st.markdown(f"- `{p}`")
 
+    with st.expander(
+        f"There are {len(source_path_groups)} groups monitoring `{source_path}`",
+        expanded=False,
+    ):
+        st.write(source_path_groups)
+
     hits = {}
-    for group in groups.values():
+    for group in source_path_groups:
+        if (group.move_triggers is None) or (len(group.move_triggers) == 0):
+            st.error(f"Skipping group `{group.name}` as it has no move triggers.")
+            continue
         paths_and_objects = (
             files if group.move_item_type == MoveItemType.FILE.value else folders
         )
