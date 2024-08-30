@@ -6,6 +6,6 @@ services:
       - CONFIG_DIR=/config
     volumes:
       - ./config:/config
-      - .:/work
+      - ./testdir:/watchdir
     ports:
       - 8501:8501
