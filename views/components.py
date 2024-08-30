@@ -10,7 +10,13 @@ from sfm.types import Group, MoveItemType
 
 
 def get_new_triggers(group: Optional[Group] = None) -> Optional[Set[str]]:
-    existing_move_triggers = sorted(list(group.move_triggers)) if group else []
+    existing_move_triggers = []
+    if (
+        group is not None
+        and group.move_triggers is not None
+        and len(group.move_triggers) > 0
+    ):
+        existing_move_triggers = sorted(list(group.move_triggers))
     move_triggers = sorted(
         s
         for s in st.text_input(
