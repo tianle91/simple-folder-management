@@ -3,7 +3,7 @@ from glob import glob
 from typing import List, Tuple
 
 
-def get_files(path: str) -> List[Tuple[str, str]]:
+def get_top_level_files(path: str) -> List[Tuple[str, str]]:
     out = []
     for p in glob(os.path.join(path, "*.*")):
         # p is {source_path}/X.ext so this grabs X.ext
@@ -12,7 +12,7 @@ def get_files(path: str) -> List[Tuple[str, str]]:
     return out
 
 
-def get_folders(path: str) -> List[Tuple[str, str]]:
+def get_top_level_folders(path: str) -> List[Tuple[str, str]]:
     out = []
     for p in glob(os.path.join(path, "*", "")):
         # p is {dump_dir}/X/ so this grabs X
