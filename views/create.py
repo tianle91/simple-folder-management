@@ -14,14 +14,10 @@ Create a new group to automatically move files or directories in source path to 
 
 @st.dialog("Present created group")
 def present_created_group(group: Group):
-    render_group(group, allow_removal=False)
-    if st.button("Create another group"):
-        st.empty()
-        st.rerun()
-    if st.button("Go to Pending"):
-        st.page_link(page="views/pending.py")
-    if st.button("List all groups"):
-        st.page_link(page="views/list.py")
+    st.markdown(f"## Group `{group.name}` created")
+    st.write(group)
+    st.page_link(page="views/pending.py", label="Go to pending moves")
+    st.page_link(page="views/list.py", label="See existing groups")
 
 
 def render_create_new_group():
