@@ -2,7 +2,7 @@
 
 .PHONY: clean
 clean:
-	rm -rf .tox .cache .venv requirements.txt .git/hooks/pre-commit
+	rm -rf .tox .cache .venv requirements.txt .git/hooks/pre-commit testdir
 
 .PHONY: .venv-prod
 .venv-prod:
@@ -26,3 +26,8 @@ test: pre-commit
 .PHONY: push
 push:
 	docker buildx build --platform linux/amd64,linux/arm64 -t tianlechen/sfm:latest --push .
+
+.PHONY: testdir
+testdir:
+	rm -r testdir
+	.venv/bin/python make_testdir.py
