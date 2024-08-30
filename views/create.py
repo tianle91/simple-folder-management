@@ -23,19 +23,22 @@ def present_created_group(group: Group):
 def render_create_new_group():
     st.markdown(CREATE_INTRO)
     name = st.text_input("Name")
-    source_path = st.text_input("Source Path")
-    destination_base_path = st.text_input("Destination Base Path")
+    src = st.text_input("Source Path")
+    dst = st.text_input("Destination Base Path")
+    triggers = get_new_triggers()
     move_item_type = st.radio("Move Item Type", ["file", "dir"], index=0)
-    move_triggers = get_new_triggers()
-    if len(source_path) == 0 or len(destination_base_path) == 0:
+
+    if len(src) == 0 or len(dst) == 0:
         st.error("Please set the default source and destination paths")
+    elif len(triggers) == 0:
+        st.error("Please set at least one move trigger")
     elif st.button("Create Group"):
         group = Group(
             name=name,
-            source_path=source_path,
-            destination_base_path=destination_base_path,
-            move_item_type=move_item_type,
-            move_triggers=move_triggers,
+            src=src,
+            dst=dst,
+            triggers=triggers,
+            move_files=move_item_type == "file",
         )
         with SqliteDict(DB_PATH) as db:
             if name in db:

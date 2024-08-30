@@ -6,17 +6,13 @@ import streamlit as st
 from sqlitedict import SqliteDict
 
 from sfm.data import DB_PATH
-from sfm.types import Group, MoveItemType
+from sfm.types import Group
 
 
-def get_new_triggers(group: Optional[Group] = None) -> Optional[Set[str]]:
+def get_new_triggers(group: Optional[Group] = None) -> Set[str]:
     existing_move_triggers = []
-    if (
-        group is not None
-        and group.move_triggers is not None
-        and len(group.move_triggers) > 0
-    ):
-        existing_move_triggers = sorted(list(group.move_triggers))
+    if group is not None:
+        existing_move_triggers = sorted(list(group.triggers))
     move_triggers = sorted(
         s
         for s in st.text_input(
@@ -26,7 +22,7 @@ def get_new_triggers(group: Optional[Group] = None) -> Optional[Set[str]]:
         ).split()
         if len(s) > 0
     )
-    return set(move_triggers) if len(move_triggers) > 0 else None
+    return set(move_triggers)
 
 
 @st.dialog("Confirm removal")
@@ -43,23 +39,27 @@ def render_group(
 ):
     st.markdown("---")
     st.markdown(
-        f"Group`{group.name}` Moves **{group.move_item_type}s** From `{group.source_path}` to `{group.destination_path}`"
+        ("📄" if group.move_files else "📁")
+        + f" {group.name}: `{group.src}` → `{group.dst}`"
     )
-    new_move_triggers = get_new_triggers(group)
-    if new_move_triggers != group.move_triggers:
+
+    new_triggers = get_new_triggers(group)
+    if new_triggers != group.triggers:
         if st.button("Update Move Triggers", key=f"{group.name}_update_move_triggers"):
             with SqliteDict(DB_PATH, autocommit=True) as db:
-                group.move_triggers = new_move_triggers
+                group.triggers = new_triggers
                 db[group.name] = group
             st.rerun()
 
     if show_existing_counts:
-        if group.move_item_type == MoveItemType.FILE:
-            paths = glob(os.path.join(group.destination_path, "*.*"))
-        else:
-            paths = glob(os.path.join(group.destination_path, "*", ""))
+        pattern = (
+            os.path.join(group.dst, "*.*")
+            if group.move_files
+            else os.path.join(group.dst, "*", "")
+        )
+        paths = glob(pattern)
         with st.expander(
-            f"{len(paths)} existing **{group.move_item_type}s** at `{group.destination_path}`"
+            f"{len(paths)} existing `{('files' if group.move_files else 'folders')}` at `{group.dst}`"
         ):
             st.markdown("\n".join(paths))
 
