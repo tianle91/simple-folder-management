@@ -43,7 +43,10 @@ for source_path in source_paths:
 
     hits = {}
     for group in groups.values():
-        for p, obj in files if group.move_item_type == MoveItemType.FILE else folders:
+        paths_and_objects = (
+            files if group.move_item_type == MoveItemType.FILE.value else folders
+        )
+        for p, obj in paths_and_objects:
             move_triggers_found = [
                 trigger for trigger in group.move_triggers if trigger in obj
             ]
@@ -58,8 +61,14 @@ for source_path in source_paths:
             group_name = list(possible_matched_groups.keys())[0]
             group = groups[group_name]
             selected_moves.append((p, group.destination_path, group_name))
-        # else:
-        # st.markdown(f'* `{p}` could be moved by the following groups: {", ".join(possible_matched_groups.keys())} [WIP]')
+        else:
+            # TODO: Handle multiple matches
+            multiple_group_names_formatted = ", ".join(
+                [f"`{s}`" for s in possible_matched_groups.keys()]
+            )
+            st.error(
+                f"Skipping `{p}` as it matches multiple groups: {multiple_group_names_formatted}"
+            )
 
     selected_moves_markdown = ""
     for p, dest_p, group_name in selected_moves:

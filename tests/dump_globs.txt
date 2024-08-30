@@ -1,4 +1,5 @@
 A.file
+AB.file
 A_dir/nothing.file
 B_dir/nothing.file
 nomatch.file
