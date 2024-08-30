@@ -14,12 +14,12 @@ def get_new_triggers(group: Optional[Group] = None) -> Set[str]:
     if group is not None:
         existing_move_triggers = sorted(list(group.triggers))
     move_triggers = sorted(
-        s
+        s.strip()
         for s in st.text_input(
-            label=f"Move Triggers (separate by space)",
-            value=" ".join(existing_move_triggers),
+            label=f"Move Triggers (separate by comma)",
+            value=", ".join(existing_move_triggers),
             key=f"{group.name}_move_triggers" if group is not None else "move_triggers",
-        ).split()
+        ).split(",")
         if len(s) > 0
     )
     return set(move_triggers)
