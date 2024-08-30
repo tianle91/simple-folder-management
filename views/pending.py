@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import streamlit as st
 
 from sfm.data import get_groups
@@ -26,7 +29,7 @@ if len(groups) == 0:
 source_paths = set(group.source_path for group in groups.values())
 st.markdown(f"Currently tracking {len(source_paths)} source paths.")
 for source_path in source_paths:
-    st.markdown(f"## Pending moves in `{source_path}`")
+    st.markdown(f"## Moves in `{source_path}`")
     files = get_top_level_files(source_path)
     folders = get_top_level_folders(source_path)
 
@@ -76,3 +79,15 @@ for source_path in source_paths:
             f"* `{p}` → `{dest_p}` (matched group: `{group_name}`)\n"
         )
     st.markdown(selected_moves_markdown)
+    if len(selected_moves) > 0:
+        if st.button("Trigger Moves"):
+            for p, dest_p, group_name in selected_moves:
+                # move p to {dest_p}/ with the extra / at the end so that it's a directory
+                # make sure dest_p exists so that src is moved inside that directory.
+                # https://docs.python.org/3/library/shutil.html#shutil.move
+                dest_p_folder = os.path.join(dest_p, "")
+                os.makedirs(dest_p, exist_ok=True)
+                shutil.move(p, dest_p_folder)
+                st.success(f"Moved `{p}` to `{dest_p_folder}`")
+            st.success("Moves ran successfully. Refresh to continue.")
+            st.stop()
