@@ -29,9 +29,18 @@ for source_path in source_paths:
     st.markdown(f"## Pending moves in `{source_path}`")
     files = get_top_level_files(source_path)
     folders = get_top_level_folders(source_path)
-    st.markdown(
-        f"Found {len(files)} files and {len(folders)} folders in `{source_path}`."
-    )
+
+    with st.expander(
+        f"Found {len(files)} files and {len(folders)} folders in `{source_path}`.",
+        expanded=False,
+    ):
+        st.markdown(f"Files ({len(files)})")
+        for p, obj in files:
+            st.markdown(f"- `{p}`")
+        st.markdown(f"Folders ({len(folders)})")
+        for p, obj in folders:
+            st.markdown(f"- `{p}`")
+
     hits = {}
     for group in groups.values():
         for p, obj in files if group.move_item_type == MoveItemType.FILE else folders:
@@ -42,4 +51,19 @@ for source_path in source_paths:
                 hits_candidates = hits.get(p, {})
                 hits_candidates[group.name] = move_triggers_found
                 hits[p] = hits_candidates
-    st.write(hits)
+
+    selected_moves = []
+    for p, possible_matched_groups in hits.items():
+        if len(possible_matched_groups) == 1:
+            group_name = list(possible_matched_groups.keys())[0]
+            group = groups[group_name]
+            selected_moves.append((p, group.destination_path, group_name))
+        # else:
+        # st.markdown(f'* `{p}` could be moved by the following groups: {", ".join(possible_matched_groups.keys())} [WIP]')
+
+    selected_moves_markdown = ""
+    for p, dest_p, group_name in selected_moves:
+        selected_moves_markdown += (
+            f"* `{p}` → `{dest_p}` (matched group: `{group_name}`)\n"
+        )
+    st.markdown(selected_moves_markdown)
