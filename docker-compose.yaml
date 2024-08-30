@@ -2,6 +2,10 @@ version: '3'
 services:
   sfm:
     image: tianlechen/sfm:latest
+    environment:
+      - CONFIG_DIR=/config
     volumes:
-      - ./tests/test_config.yaml:/config/config.yaml
+      - ./config:/config
       - .:/work
+    ports:
+      - 8501:8501

@@ -12,4 +12,4 @@ RUN pip install tox==3.26.0 poetry==1.3.2 tox-poetry-installer==0.10.2
 COPY . /work
 WORKDIR /work
 RUN make .venv-prod
-ENTRYPOINT [ ".venv/bin/python", "app.py", "/config/config.yaml" ]
+ENTRYPOINT [ ".venv/bin/python", "-m", "streamlit", "run", "app.py" ]
