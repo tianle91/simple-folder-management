@@ -27,5 +27,7 @@ test: pre-commit
 push:
 	docker buildx build --platform linux/amd64,linux/arm64 -t tianlechen/sfm:latest --push .
 
+.PHONY: testdir
 testdir:
+	rm -r testdir
 	.venv/bin/python make_testdir.py
