@@ -1,4 +1,5 @@
 import os
+from typing import Dict
 
 from sqlitedict import SqliteDict
 
@@ -8,7 +9,7 @@ CONFIG_DIR = os.getenv("CONFIG_DIR", "./config")
 DB_PATH = os.path.join(CONFIG_DIR, "sfm.db")
 
 
-def get_groups() -> dict[str, Group]:
+def get_groups() -> Dict[str, Group]:
     os.makedirs(CONFIG_DIR, exist_ok=True)
     with SqliteDict(DB_PATH) as db:
         # sort by dictionary keys
