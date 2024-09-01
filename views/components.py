@@ -37,7 +37,6 @@ def confirm_removal(group: Group):
 def render_group(
     group: Group, allow_removal: bool = True, show_existing_counts: bool = True
 ):
-    st.markdown("---")
     st.markdown(
         ("📄" if group.move_files else "📁")
         + f" {group.name}: `{group.src}` → `{group.dst}`"
@@ -66,3 +65,5 @@ def render_group(
     if allow_removal:
         if st.button("Remove group", key=f"{group.name}_remove"):
             confirm_removal(group)
+
+    st.markdown("---")
