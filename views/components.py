@@ -5,8 +5,7 @@ from typing import Optional, Set
 import streamlit as st
 from sqlitedict import SqliteDict
 
-from sfm.data import DB_PATH
-from sfm.types import Group
+from sfm.data import DB_PATH, Group
 
 
 def get_new_triggers(group: Optional[Group] = None) -> Set[str]:
@@ -51,6 +50,7 @@ def render_group(
             st.rerun()
 
     if show_existing_counts:
+        # TODO: Combine with sfm/path.py
         pattern = (
             os.path.join(group.dst, "*.*")
             if group.move_files

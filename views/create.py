@@ -4,9 +4,8 @@ from glob import glob
 import streamlit as st
 from sqlitedict import SqliteDict
 
-from sfm.data import DB_PATH
+from sfm.data import DB_PATH, Group
 from sfm.path import get_token_to_file_names, get_token_to_folder_names
-from sfm.types import Group
 from views.components import get_new_triggers, render_group
 
 CREATE_INTRO = """
