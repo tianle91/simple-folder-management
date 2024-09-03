@@ -1,11 +1,10 @@
-import os
-from glob import glob
 from typing import Optional, Set
 
 import streamlit as st
 from sqlitedict import SqliteDict
 
 from sfm.data import DB_PATH, Group
+from sfm.path import get_top_level_files, get_top_level_folders
 
 
 def get_new_triggers(group: Optional[Group] = None) -> Set[str]:
@@ -50,17 +49,15 @@ def render_group(
             st.rerun()
 
     if show_existing_counts:
-        # TODO: Combine with sfm/path.py
-        pattern = (
-            os.path.join(group.dst, "*.*")
+        paths = (
+            get_top_level_files(path=group.src)
             if group.move_files
-            else os.path.join(group.dst, "*", "")
+            else get_top_level_folders(path=group.src)
         )
-        paths = glob(pattern)
         with st.expander(
             f"{len(paths)} existing `{('files' if group.move_files else 'folders')}` at `{group.dst}`"
         ):
-            st.markdown("\n".join(paths))
+            st.markdown("\n".join([p for p, _ in paths]))
 
     if allow_removal:
         if st.button("Remove group", key=f"{group.name}_remove"):
