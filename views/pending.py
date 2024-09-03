@@ -5,7 +5,7 @@ from typing import Dict, List
 import streamlit as st
 
 from sfm.data import get_groups
-from sfm.moves import get_top_level_files, get_top_level_folders
+from sfm.path import get_top_level_files, get_top_level_folders
 from sfm.types import Group
 
 PENDING_INTRO = """
