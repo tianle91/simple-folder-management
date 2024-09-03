@@ -1,11 +1,13 @@
-import os
-from glob import glob
-
 import streamlit as st
 from sqlitedict import SqliteDict
 
 from sfm.data import DB_PATH, Group
-from sfm.path import get_token_to_file_names, get_token_to_folder_names
+from sfm.path import (
+    get_token_to_file_names,
+    get_token_to_folder_names,
+    get_top_level_files,
+    get_top_level_folders,
+)
 from views.components import get_new_triggers, render_group
 
 CREATE_INTRO = """
@@ -33,21 +35,47 @@ def render_create_new_group():
     if src == "":
         st.error("Please set source path")
     else:
-        if move_files:
-            st.write(get_token_to_file_names(path=src))
-        else:
-            st.write(get_token_to_folder_names(path=src))
+        token_to_names = (
+            get_token_to_file_names(path=src)
+            if move_files
+            else get_token_to_folder_names(path=src)
+        )
+        most_tokens = [
+            (k, token_to_names[k])
+            for k in sorted(
+                token_to_names.keys(),
+                key=lambda k: len(token_to_names[k]),
+                reverse=True,
+            )
+            if len(token_to_names[k]) > 1
+        ]
+        with st.expander(
+            f"Found {len(most_tokens)} tokens from {'files' if move_files else 'folders'} in source path"
+        ):
+            for k, names in most_tokens:
+                summary_md_str = f"* `{k}` appears in {len(names)} {'files' if move_files else 'folders'}: "
+                if len(names) > 0:
+                    for i, name in enumerate(names):
+                        if i <= 5:
+                            summary_md_str += f" `{name}`"
+                        else:
+                            summary_md_str += f"... and {len(names) - i} more"
+                            break
+                st.markdown(summary_md_str)
 
     dst = st.text_input("Destination Base Path")
     if dst == "":
         st.error("Please set destination path")
     else:
-        pattern = os.path.join(dst, "*.*") if move_files else os.path.join(dst, "*", "")
-        paths = glob(pattern)
+        paths = (
+            get_top_level_files(path=group.src)
+            if group.move_files
+            else get_top_level_folders(path=group.src)
+        )
         with st.expander(
-            f"{len(paths)} existing `{('files' if move_files else 'folders')}` at `{dst}`"
+            f"{len(paths)} existing `{('files' if group.move_files else 'folders')}` at `{group.dst}`"
         ):
-            st.markdown("\n".join(paths))
+            st.markdown("\n".join([p for p, _ in paths]))
 
     triggers = get_new_triggers()
     if len(triggers) == 0:
