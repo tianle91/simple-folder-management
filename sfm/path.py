@@ -22,17 +22,16 @@ def get_top_level_folders(path: str) -> List[Tuple[str, str]]:
     return out
 
 
-def get_tokens_from_string(s: str) -> Set[str]:
-    toks = s.split() + s.split("_") + s.split("-")
-    for regex in [r"\(.*?\)", r"\[.*?\]"]:
-        toks += re.findall(regex, s)
-    return set(toks)
+def tokenize(s: str) -> Set[str]:
+    for sep in [".", "-", "_", "/", "\\", ":", ";", ",", "(", ")", "[", "]"]:
+        s = s.replace(sep, " ")
+    return set(s.split())
 
 
 def get_token_to_file_names(path: str) -> Dict[str, List[str]]:
     toks_to_file_names: Dict[str, List[str]] = {}
     for _, file_name in get_top_level_files(path=path):
-        toks = get_tokens_from_string(s=file_name)
+        toks = tokenize(s=file_name)
         for tok in toks:
             tok_file_names = toks_to_file_names.get(tok, [])
             tok_file_names.append(file_name)
@@ -43,7 +42,7 @@ def get_token_to_file_names(path: str) -> Dict[str, List[str]]:
 def get_token_to_folder_names(path: str) -> Dict[str, List[str]]:
     toks_to_folder_names: Dict[str, List[str]] = {}
     for _, folder_name in get_top_level_folders(path=path):
-        toks = get_tokens_from_string(s=folder_name)
+        toks = tokenize(s=folder_name)
         for tok in toks:
             tok_folder_names = toks_to_folder_names.get(tok, [])
             tok_folder_names.append(folder_name)
