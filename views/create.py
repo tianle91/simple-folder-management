@@ -68,9 +68,9 @@ def render_create_new_group():
         st.error("Please set destination path")
     else:
         paths = (
-            get_top_level_files(path=src)
+            get_top_level_files(path=dst)
             if move_files
-            else get_top_level_folders(path=src)
+            else get_top_level_folders(path=dst)
         )
         with st.expander(
             f"{len(paths)} existing `{('files' if move_files else 'folders')}` at `{dst}`"
