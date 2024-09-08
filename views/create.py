@@ -75,7 +75,7 @@ def render_create_new_group():
         with st.expander(
             f"{len(paths)} existing `{('files' if move_files else 'folders')}` at `{dst}`"
         ):
-            st.markdown("\n".join([p for p, _ in paths]))
+            st.markdown("\n".join([f"`{p}`" for p, _ in paths]))
 
     triggers = get_new_triggers()
     if len(triggers) == 0:

@@ -57,7 +57,7 @@ def render_group(
         with st.expander(
             f"{len(paths)} existing `{('files' if group.move_files else 'folders')}` at `{group.dst}`"
         ):
-            st.markdown("\n".join([p for p, _ in paths]))
+            st.markdown("\n".join([f"`{p}`" for p, _ in paths]))
 
     if allow_removal:
         if st.button("Remove group", key=f"{group.name}_remove"):
