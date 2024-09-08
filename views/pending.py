@@ -4,9 +4,8 @@ from typing import Dict, List
 
 import streamlit as st
 
-from sfm.data import get_groups
-from sfm.moves import get_top_level_files, get_top_level_folders
-from sfm.types import Group
+from sfm.data import Group, get_groups
+from sfm.path import get_top_level_files, get_top_level_folders
 
 PENDING_INTRO = """
 # Pending
@@ -45,10 +44,10 @@ for src_path, src_groups in srcs_to_groups_mapping.items():
     ):
         st.markdown(f"Files ({len(files)})")
         for p, obj in files:
-            st.markdown(f"- `{p}`")
+            st.markdown(f"\n`{p}`")
         st.markdown(f"Folders ({len(folders)})")
         for p, obj in folders:
-            st.markdown(f"- `{p}`")
+            st.markdown(f"\n`{p}`")
 
     with st.expander(
         f"There are {len(src_groups)} groups monitoring `{src_path}`",

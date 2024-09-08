@@ -1,8 +1,13 @@
 import streamlit as st
 from sqlitedict import SqliteDict
 
-from sfm.data import DB_PATH
-from sfm.types import Group
+from sfm.data import DB_PATH, Group
+from sfm.path import (
+    get_token_to_file_names,
+    get_token_to_folder_names,
+    get_top_level_files,
+    get_top_level_folders,
+)
 from views.components import get_new_triggers, render_group
 
 CREATE_INTRO = """
@@ -22,23 +27,75 @@ def present_created_group(group: Group):
 
 def render_create_new_group():
     st.markdown(CREATE_INTRO)
-    name = st.text_input("Name")
-    src = st.text_input("Source Path")
-    dst = st.text_input("Destination Base Path")
-    triggers = get_new_triggers()
-    move_item_type = st.radio("Move Item Type", ["file", "dir"], index=0)
 
-    if len(src) == 0 or len(dst) == 0:
-        st.error("Please set the default source and destination paths")
-    elif len(triggers) == 0:
-        st.error("Please set at least one move trigger")
-    elif st.button("Create Group"):
+    name = st.text_input("Name").strip()
+    move_files = st.radio("Move Item Type", ["file", "dir"], index=0) == "file"
+
+    src = st.text_input("Source Path").strip()
+    if src == "":
+        st.error("Please set source path")
+    else:
+        token_to_obj_names = (
+            get_token_to_file_names(path=src)
+            if move_files
+            else get_token_to_folder_names(path=src)
+        )
+        most_tokens = [
+            (k, token_to_obj_names[k])
+            for k in sorted(
+                token_to_obj_names.keys(),
+                key=lambda k: len(token_to_obj_names[k]),
+                reverse=True,
+            )
+            if len(token_to_obj_names[k]) > 1
+        ]
+        with st.expander(
+            f"Found {len(most_tokens)} tokens from {'files' if move_files else 'folders'} in source path"
+        ):
+            for k, obj_names in most_tokens:
+                summary_md_str = f"* `{k}` appears in {len(obj_names)} {'files' if move_files else 'folders'}: "
+                if len(obj_names) > 0:
+                    for i, obj_name in enumerate(obj_names):
+                        if i <= 5:
+                            summary_md_str += f" `{obj_name}`"
+                        else:
+                            summary_md_str += f"... and {len(obj_names) - i} more"
+                            break
+                st.markdown(summary_md_str)
+
+    dst = st.text_input("Destination Base Path").strip()
+    if dst == "":
+        st.error("Please set destination path")
+    else:
+        paths = (
+            get_top_level_files(path=dst)
+            if move_files
+            else get_top_level_folders(path=dst)
+        )
+        with st.expander(
+            f"{len(paths)} existing `{('files' if move_files else 'folders')}` at `{dst}`"
+        ):
+            st.markdown("\n\n".join([f"`{p}`" for p, _ in paths]))
+
+    triggers = get_new_triggers()
+    if len(triggers) == 0:
+        st.error("Please set at least one trigger")
+    else:
+        pass
+
+    if (
+        name != ""
+        and src != ""
+        and dst != ""
+        and len(triggers) > 0
+        and st.button("Create Group")
+    ):
         group = Group(
             name=name,
             src=src,
             dst=dst,
             triggers=triggers,
-            move_files=move_item_type == "file",
+            move_files=move_files,
         )
         with SqliteDict(DB_PATH) as db:
             if name in db:
@@ -47,6 +104,8 @@ def render_create_new_group():
                 db[name] = group
                 db.commit()
                 present_created_group(group)
+    else:
+        st.warning("Please fill out all fields")
 
 
 render_create_new_group()
