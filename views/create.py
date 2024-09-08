@@ -28,42 +28,42 @@ def present_created_group(group: Group):
 def render_create_new_group():
     st.markdown(CREATE_INTRO)
 
-    name = st.text_input("Name")
+    name = st.text_input("Name").strip()
     move_files = st.radio("Move Item Type", ["file", "dir"], index=0) == "file"
 
-    src = st.text_input("Source Path")
+    src = st.text_input("Source Path").strip()
     if src == "":
         st.error("Please set source path")
     else:
-        token_to_names = (
+        token_to_obj_names = (
             get_token_to_file_names(path=src)
             if move_files
             else get_token_to_folder_names(path=src)
         )
         most_tokens = [
-            (k, token_to_names[k])
+            (k, token_to_obj_names[k])
             for k in sorted(
-                token_to_names.keys(),
-                key=lambda k: len(token_to_names[k]),
+                token_to_obj_names.keys(),
+                key=lambda k: len(token_to_obj_names[k]),
                 reverse=True,
             )
-            if len(token_to_names[k]) > 1
+            if len(token_to_obj_names[k]) > 1
         ]
         with st.expander(
             f"Found {len(most_tokens)} tokens from {'files' if move_files else 'folders'} in source path"
         ):
-            for k, names in most_tokens:
-                summary_md_str = f"* `{k}` appears in {len(names)} {'files' if move_files else 'folders'}: "
-                if len(names) > 0:
-                    for i, name in enumerate(names):
+            for k, obj_names in most_tokens:
+                summary_md_str = f"* `{k}` appears in {len(obj_names)} {'files' if move_files else 'folders'}: "
+                if len(obj_names) > 0:
+                    for i, obj_name in enumerate(obj_names):
                         if i <= 5:
-                            summary_md_str += f" `{name}`"
+                            summary_md_str += f" `{obj_name}`"
                         else:
-                            summary_md_str += f"... and {len(names) - i} more"
+                            summary_md_str += f"... and {len(obj_names) - i} more"
                             break
                 st.markdown(summary_md_str)
 
-    dst = st.text_input("Destination Base Path")
+    dst = st.text_input("Destination Base Path").strip()
     if dst == "":
         st.error("Please set destination path")
     else:
@@ -104,6 +104,8 @@ def render_create_new_group():
                 db[name] = group
                 db.commit()
                 present_created_group(group)
+    else:
+        st.warning("Please fill out all fields")
 
 
 render_create_new_group()
