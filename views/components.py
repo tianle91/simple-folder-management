@@ -50,9 +50,9 @@ def render_group(
 
     if show_existing_counts:
         paths = (
-            get_top_level_files(path=group.src)
+            get_top_level_files(path=group.dst)
             if group.move_files
-            else get_top_level_folders(path=group.src)
+            else get_top_level_folders(path=group.dst)
         )
         with st.expander(
             f"{len(paths)} existing `{('files' if group.move_files else 'folders')}` at `{group.dst}`"
