@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
 PARENTHESES = ["(", ")", "[", "]", "{", "}"]
-SEPARATORS = [".", "-", "_", "/", "#", "\\"]
+SEPARATORS = [".", "-", "_", "|", "/", "#", "\\"]
 
 
 def get_top_level_files(path: str) -> List[Tuple[str, str]]:
@@ -28,7 +28,7 @@ def get_top_level_folders(path: str) -> List[Tuple[str, str]]:
 def tokenize(s: str) -> Set[str]:
     for c in SEPARATORS + PARENTHESES:
         s = s.replace(c, " ")
-    return set(s.split())
+    return set([sub_s for sub_s in s.split() if len(sub_s) > 1])
 
 
 def get_token_to_file_names(path: str) -> Dict[str, List[str]]:
