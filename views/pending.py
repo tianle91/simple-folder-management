@@ -44,10 +44,10 @@ for src_path, src_groups in srcs_to_groups_mapping.items():
     ):
         st.markdown(f"Files ({len(files)})")
         for p, obj in files:
-            st.markdown(f"- `{p}`")
+            st.markdown(f"\n`{p}`")
         st.markdown(f"Folders ({len(folders)})")
         for p, obj in folders:
-            st.markdown(f"- `{p}`")
+            st.markdown(f"\n`{p}`")
 
     with st.expander(
         f"There are {len(src_groups)} groups monitoring `{src_path}`",
