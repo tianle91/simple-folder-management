@@ -1,7 +1,9 @@
 import os
-import re
 from glob import glob
 from typing import Dict, List, Set, Tuple
+
+PARENTHESES = ["(", ")", "[", "]", "{", "}"]
+SEPARATORS = [".", "-", "_", "/", "#", "\\"]
 
 
 def get_top_level_files(path: str) -> List[Tuple[str, str]]:
@@ -23,8 +25,8 @@ def get_top_level_folders(path: str) -> List[Tuple[str, str]]:
 
 
 def tokenize(s: str) -> Set[str]:
-    for sep in [".", "-", "_", "/", "\\", ":", ";", ",", "(", ")", "[", "]"]:
-        s = s.replace(sep, " ")
+    for c in SEPARATORS + PARENTHESES:
+        s = s.replace(c, " ")
     return set(s.split())
 
 
