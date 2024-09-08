@@ -1,5 +1,6 @@
 import os
 from glob import glob
+from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
 PARENTHESES = ["(", ")", "[", "]", "{", "}"]
@@ -33,7 +34,8 @@ def tokenize(s: str) -> Set[str]:
 def get_token_to_file_names(path: str) -> Dict[str, List[str]]:
     toks_to_file_names: Dict[str, List[str]] = {}
     for _, file_name in get_top_level_files(path=path):
-        toks = tokenize(s=file_name)
+        # only tokenize the file name, not the extension
+        toks = tokenize(s=Path(file_name).stem)
         for tok in toks:
             tok_file_names = toks_to_file_names.get(tok, [])
             tok_file_names.append(file_name)
